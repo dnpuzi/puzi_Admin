@@ -1,7 +1,7 @@
 <template>
   <div class="login-container">
     <el-form ref="loginForm" :model="loginForm" :rules="loginRules" class="login-form" auto-complete="on" label-position="left">
-      <h3 class="title">vue-admin-template</h3>
+      <h3 class="title">学长的电脑铺子</h3>
       <el-form-item prop="username">
         <span class="svg-container svg-container_login">
           <svg-icon icon-class="user" />
@@ -25,19 +25,16 @@
       </el-form-item>
       <el-form-item>
         <el-button :loading="loading" type="primary" style="width:100%;" @click.native.prevent="handleLogin">
-          Sign in
+          登&nbsp;录
         </el-button>
       </el-form-item>
-      <div class="tips">
-        <span style="margin-right:20px;">username: admin</span>
-        <span> password: admin</span>
-      </div>
     </el-form>
   </div>
 </template>
 
 <script>
-
+import request from '@/utils/request'
+import qs from 'qs'
 export default {
   name: 'Login',
   data() {
@@ -53,8 +50,8 @@ export default {
     }
     return {
       loginForm: {
-        username: 'admin',
-        password: 'admin'
+        username: '谭启辉',
+        password: '123456'
       },
       loginRules: {
         username: [{ required: true, trigger: 'blur', validator: validateUsername }],
@@ -85,11 +82,17 @@ export default {
       this.$refs.loginForm.validate(valid => {
         if (valid) {
           this.loading = true
-          this.$store.dispatch('Login', this.loginForm).then(() => {
-            this.loading = false
-            this.$router.push({ path: this.redirect || '/' })
-          }).catch(() => {
-            this.loading = false
+          this.$axios.post(this.$store.state.app.host + 'Admin/Admin/adminLogin', qs.stringify(this.loginForm))
+          .then (res => {
+            if (res.data.code == 3) {
+              this.loading = false
+              localStorage.setItem('puziUserInfo', JSON.stringify(res.data.data))
+              this.$store.dispatch('AddPuziUserInfo', res.data.data)
+              this.$router.push({ path: this.redirect || '/' })
+            } else {
+              this.$message.error(res.data.msg)
+              this.loading = false
+            }
           })
         } else {
           console.log('error submit!!')

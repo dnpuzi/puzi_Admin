@@ -36,7 +36,27 @@ export const constantRouterMap = [
       component: () => import('@/views/dashboard/index')
     }]
   },
-
+  {
+    path: '/user',
+    component: Layout,
+    redirect: 'userList',
+    name: 'User',
+    meta: { title: '会员', icon: 'table' },
+    children: [
+      {
+        path: 'addVipUser',
+        name: 'AddVipUser',
+        component: () => import('@/views/user/addVipUser/index'),
+        meta: { title: '添加购机会员', icon: 'nested' }
+      },
+      {
+        path: 'userList',
+        name: 'UserList',
+        component: () => import('@/views/user/userList/index'),
+        meta: { title: '会员列表', icon: 'table' }
+      }
+    ]
+  },
   {
     path: '/example',
     component: Layout,
